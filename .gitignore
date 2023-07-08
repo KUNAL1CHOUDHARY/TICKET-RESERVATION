@@ -1,24 +1,174 @@
-# Compiled class file
-*.class
+import java.util.Scanner;
 
-# Log file
-*.log
+class ticket{
+    private String username;
+    private String password;
 
-# BlueJ files
-*.ctxt
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+    public String getUsername() {
+        return username;
+    }
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+    public String getPassword() {
+        return password;
+    }
+}
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+class Ticket {
+    private String pnr;
+    private String passengerName;
+    private String trainNumber;
+    private String trainName;
+    private String classType;
+    private String journeyDate;
+    private String source;
+    private String destination;
+
+    public Ticket(String pnr, String passengerName, String trainNumber, String trainName, String classType,
+                 String journeyDate, String source, String destination) {
+        this.pnr = pnr;
+        this.passengerName = passengerName;
+        this.trainNumber = trainNumber;
+        this.trainName = trainName;
+        this.classType = classType;
+        this.journeyDate = journeyDate;
+        this.source = source;
+        this.destination = destination;
+    }
+
+    public String getPNR() {
+        return pnr;
+    }
+
+    // Getters for other ticket details
+
+    @Override
+    public String toString() {
+        return "PNR: " + pnr +
+                "\nPassenger Name: " + passengerName +
+                "\nTrain Number: " + trainNumber +
+                "\nTrain Name: " + trainName +
+                "\nClass Type: " + classType +
+                "\nJourney Date: " + journeyDate +
+                "\nSource: " + source +
+                "\nDestination: " + destination;
+    }
+}
+
+class ReservationSystem {
+    private Ticket[] tickets;
+    private int numOfTickets;
+
+    public ReservationSystem(int capacity) {
+        tickets = new Ticket[capacity];
+        numOfTickets = 0;
+    }
+
+    public boolean addTicket(Ticket ticket) {
+        if (numOfTickets < tickets.length) {
+            tickets[numOfTickets] = ticket;
+            numOfTickets++;
+            return true;
+        }
+        return false;
+    }
+
+    public Ticket findTicketByPNR(String pnr) {
+        for (int i = 0; i < numOfTickets; i++) {
+            if (tickets[i].getPNR().equals(pnr)) {
+                return tickets[i];
+            }
+        }
+        return null;
+    }
+}
+
+public class OnlineTicketReservationSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Creating a sample user
+        User user = new User("username", "password");
+
+        // How to reate a reservation system with a capacity of 100 tickets
+        ReservationSystem reservationSystem = new ReservationSystem(100);
+
+        //  How to Login
+        System.out.println("Enter your username: ");
+        String username = scanner.nextLine();
+        System.out.println("Enter your password: ");
+        String password = scanner.nextLine();
+
+        if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
+            System.out.println("Login successful!");
+
+            while (true) {
+                System.out.println("\nMENU");
+                System.out.println("1. Reserve a ticket");
+                System.out.println("2. Cancel a ticket");
+                System.out.println("3. Exit");
+                System.out.println("Enter your choice: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                if (choice == 1) {
+                    System.out.println("\nEnter ticket details:");
+                    System.out.println("PNR: ");
+                    String pnr = scanner.nextLine();
+                    System.out.println("Passenger Name: ");
+                    String passengerName = scanner.nextLine();
+                    System.out.println("Train Number: ");
+                    String trainNumber = scanner.nextLine();
+                    System.out.println("Train Name: ");
+                    String trainName = scanner.nextLine();
+                    System.out.println("Class Type: ");
+                    String classType = scanner.nextLine();
+                    System.out.println("Journey Date: ");
+                    String journeyDate = scanner.nextLine();
+                    System.out.println("Source: ");
+                    String source = scanner.nextLine();
+                    System.out.println("Destination: ");
+                    String destination = scanner.nextLine();
+
+                    Ticket ticket = new Ticket(pnr, passengerName, trainNumber, trainName, classType,
+                            journeyDate, source, destination);
+
+                    if (reservationSystem.addTicket(ticket)) {
+                        System.out.println("\nTicket reserved successfully!");
+                    } else {
+                        System.out.println("\nFailed to reserve ticket. No more capacity in the system.");
+                    }
+                } else if (choice == 2) 
+{
+                    System.out.println("\nEnter the PNR of the ticket to cancel: ");
+                    String pnr = scanner.nextLine();
+                    Ticket ticket = reservationSystem.findTicketByPNR(pnr);
+                    if (ticket != null) {
+                        System.out.println("\nTicket details:");
+                        System.out.println(ticket.toString());
+
+                        System.out.println("\nAre you sure you want to cancel this ticket? (Y/N)");
+                        String confirm = scanner.nextLine();
+                        if (confirm.equalsIgnoreCase("Y")) {
+                            // Perform cancellation logic here
+                            System.out.println("\nTicket canceled successfully!");
+                        }
+                    } else {
+                        System.out.println("\nTicket with PNR " + pnr + " not found.");
+                    }
+                } else if (choice == 3) {
+                    System.out.println("Exiting...");
+                    break;
+                } else {
+                    System.out.println("Invalid choice. Please try again.");
+                }
+            }
+        } else {
+            System.out.println("Invalid credentials. Login failed!");
+        }
+    }
+}
